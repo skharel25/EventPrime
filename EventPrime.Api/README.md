@@ -32,36 +32,25 @@ EventPrime.Api/
 |------|---------|
 | [.NET SDK](https://dotnet.microsoft.com/download) | 8.0 |
 | [Azure Functions Core Tools](https://learn.microsoft.com/azure/azure-functions/functions-run-local) | v4 |
-| [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) (local storage emulator) | latest |
 
-Install Azure Functions Core Tools:
+Install Azure Functions Core Tools v4:
 
 ```bash
 npm install -g azure-functions-core-tools@4 --unsafe-perm true
 ```
 
-Install Azurite:
-
-```bash
-npm install -g azurite
-```
+> **Note:** All current endpoints are HTTP-only, so no local storage emulator (Azurite) is required. If you add non-HTTP triggers (e.g. Queue, Blob) in the future, start Azurite and set `AzureWebJobsStorage` to `"UseDevelopmentStorage=true"` in `local.settings.json`.
 
 ## Running locally
 
-1. Start the local storage emulator in a separate terminal:
+Start the function app from the `EventPrime.Api` directory:
 
-   ```bash
-   azurite --silent
-   ```
+```bash
+cd EventPrime.Api
+func start
+```
 
-2. Start the function app from the `EventPrime.Api` directory:
-
-   ```bash
-   cd EventPrime.Api
-   func start
-   ```
-
-   The API will be available at `http://localhost:7071/api/`.
+The API will be available at `http://localhost:7071/api/`.
 
 ## Available endpoints
 
@@ -73,6 +62,8 @@ npm install -g azurite
 | `POST` | `/api/events` | Create a new event |
 | `POST` | `/api/contact` | Submit a contact form message |
 | `POST` | `/api/auth/login` | Admin login (returns a token) |
+| `GET` | `/api/swagger/ui` | Interactive Swagger UI |
+| `GET` | `/api/swagger.json` | OpenAPI 3.0 specification |
 
 ### Example requests
 
