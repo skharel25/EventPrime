@@ -32,6 +32,7 @@ EventPrime.Api/
 |------|---------|
 | [.NET SDK](https://dotnet.microsoft.com/download) | 8.0 |
 | [Azure Functions Core Tools](https://learn.microsoft.com/azure/azure-functions/functions-run-local) | v4 |
+| [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) (local storage emulator) | latest |
 
 Install Azure Functions Core Tools v4:
 
@@ -39,18 +40,30 @@ Install Azure Functions Core Tools v4:
 npm install -g azure-functions-core-tools@4 --unsafe-perm true
 ```
 
-> **Note:** All current endpoints are HTTP-only, so no local storage emulator (Azurite) is required. If you add non-HTTP triggers (e.g. Queue, Blob) in the future, start Azurite and set `AzureWebJobsStorage` to `"UseDevelopmentStorage=true"` in `local.settings.json`.
+Install Azurite:
+
+```bash
+npm install -g azurite
+```
+
+> **Why Azurite?** The Azure Functions host uses `AzureWebJobsStorage` for its distributed host-lock lease and internal health checks regardless of trigger type. Without a valid storage connection the host never loads any functions and reports "No job functions found".
 
 ## Running locally
 
-Start the function app from the `EventPrime.Api` directory:
+1. Start Azurite in a separate terminal:
 
-```bash
-cd EventPrime.Api
-func start
-```
+   ```bash
+   azurite --silent
+   ```
 
-The API will be available at `http://localhost:7071/api/`.
+2. Start the function app from the `EventPrime.Api` directory:
+
+   ```bash
+   cd EventPrime.Api
+   func start
+   ```
+
+   The API will be available at `http://localhost:7071/api/`.
 
 ## Available endpoints
 
