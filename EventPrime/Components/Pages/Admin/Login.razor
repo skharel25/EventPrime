@@ -1,5 +1,5 @@
 @page "/admin/login"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @using System.ComponentModel.DataAnnotations
 @inject EventPrime.Services.AdminAuthService AuthService
 @inject NavigationManager Nav
