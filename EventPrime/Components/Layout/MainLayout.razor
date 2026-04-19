@@ -1,23 +1,59 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<NavMenu />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<main class="main-content">
+    @Body
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="footer-brand">EventPrime</h5>
+                <p class="footer-tagline">Your premier destination for discovering and managing unforgettable events.</p>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h6 class="footer-heading">Navigate</h6>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/events">Events</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h6 class="footer-heading">Contact</h6>
+                <ul class="footer-links">
+                    <li><a href="mailto:hello@eventprime.com">hello@eventprime.com</a></li>
+                    <li><span>+1 (800) 555-0199</span></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Follow Us</h6>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter/X">𝕏</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="Facebook">𝖿</a>
+                </div>
+            </div>
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+        <hr class="footer-divider" />
+        <p class="footer-copy">&copy; @currentYear EventPrime. All rights reserved.</p>
+    </div>
+</footer>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private int currentYear;
+
+    protected override void OnInitialized()
+    {
+        currentYear = DateTime.Now.Year;
+    }
+}
