@@ -1,0 +1,78 @@
+@page "/admin/login"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using System.ComponentModel.DataAnnotations
+@inject EventPrime.Services.AdminAuthService AuthService
+@inject NavigationManager Nav
+
+<PageTitle>Admin Login – EventPrime</PageTitle>
+
+<section class="admin-login-section">
+    <div class="admin-login-card">
+        <div class="admin-login-header">
+            <span class="admin-login-icon">🔐</span>
+            <h1 class="admin-login-title">Admin Login</h1>
+            <p class="admin-login-subtitle">Sign in to access the EventPrime admin dashboard.</p>
+        </div>
+
+        <EditForm Model="model" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+
+            @if (loginFailed)
+            {
+                <div class="admin-alert-error">
+                    Invalid email or password. Please try again.
+                </div>
+            }
+
+            <div class="admin-form-field">
+                <label class="admin-field-label">Email Address</label>
+                <InputText class="admin-field-input" @bind-Value="model.Email" placeholder="admin@eventprime.com" type="email" />
+                <ValidationMessage For="@(() => model.Email)" class="admin-field-error" />
+            </div>
+
+            <div class="admin-form-field">
+                <label class="admin-field-label">Password</label>
+                <InputText class="admin-field-input" @bind-Value="model.Password" placeholder="••••••••" type="password" />
+                <ValidationMessage For="@(() => model.Password)" class="admin-field-error" />
+            </div>
+
+            <button type="submit" class="admin-login-btn">Sign In</button>
+        </EditForm>
+    </div>
+</section>
+
+@code {
+    private LoginModel model = new();
+    private bool loginFailed = false;
+
+    protected override void OnInitialized()
+    {
+        if (AuthService.IsAuthenticated)
+        {
+            Nav.NavigateTo("/admin");
+        }
+    }
+
+    private void HandleLogin()
+    {
+        loginFailed = false;
+        if (AuthService.Login(model.Email, model.Password))
+        {
+            Nav.NavigateTo("/admin");
+        }
+        else
+        {
+            loginFailed = true;
+        }
+    }
+
+    private class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required.")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
