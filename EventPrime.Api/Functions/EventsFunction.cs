@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using EventPrime.Api.Models;
@@ -131,29 +132,9 @@ public class EventsFunction
 
     private static List<string> ValidateRequest(CreateEventRequest body)
     {
-        var errors = new List<string>();
-
-        if (string.IsNullOrWhiteSpace(body.Title))
-            errors.Add("Title is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Description))
-            errors.Add("Description is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Category))
-            errors.Add("Category is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Location))
-            errors.Add("Location is required.");
-
-        if (body.Date == default)
-            errors.Add("A valid Date is required.");
-
-        if (body.Capacity < 1)
-            errors.Add("Capacity must be at least 1.");
-
-        if (string.IsNullOrWhiteSpace(body.OrganizerName))
-            errors.Add("OrganizerName is required.");
-
-        return errors;
+        var context = new ValidationContext(body);
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(body, context, results, validateAllProperties: true);
+        return results.Select(r => r.ErrorMessage ?? "Validation error.").ToList();
     }
 }

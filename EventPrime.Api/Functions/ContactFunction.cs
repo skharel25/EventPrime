@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using EventPrime.Api.Models;
@@ -76,20 +77,9 @@ public class ContactFunction
 
     private static List<string> ValidateRequest(ContactRequest body)
     {
-        var errors = new List<string>();
-
-        if (string.IsNullOrWhiteSpace(body.Name))
-            errors.Add("Name is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Email))
-            errors.Add("Email is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Subject))
-            errors.Add("Subject is required.");
-
-        if (string.IsNullOrWhiteSpace(body.Message))
-            errors.Add("Message is required.");
-
-        return errors;
+        var context = new ValidationContext(body);
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(body, context, results, validateAllProperties: true);
+        return results.Select(r => r.ErrorMessage ?? "Validation error.").ToList();
     }
 }
