@@ -73,6 +73,29 @@
     width: 100%;
 }
 
+/* Admin button */
+.ep-admin-btn {
+    background: transparent;
+    color: #c084fc !important;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+}
+
+.ep-admin-btn:hover,
+.ep-admin-btn.active {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.75);
+    color: #fff !important;
+    box-shadow: 0 2px 12px rgba(168, 85, 247, 0.25);
+}
+
 /* CTA button */
 .ep-cta-btn {
     background: linear-gradient(135deg, #a855f7, #6366f1);
@@ -174,6 +197,13 @@
 
     .ep-cta-btn {
         margin-top: 0.85rem;
+        text-align: center;
+        display: block;
+        width: 100%;
+    }
+
+    .ep-admin-btn {
+        margin-top: 0.5rem;
         text-align: center;
         display: block;
         width: 100%;

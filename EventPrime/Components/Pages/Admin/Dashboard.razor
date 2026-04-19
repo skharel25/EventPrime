@@ -1,0 +1,149 @@
+@page "/admin"
+@rendermode InteractiveServer
+@inject EventPrime.Services.AdminAuthService AuthService
+@inject NavigationManager Nav
+
+<PageTitle>Admin Dashboard – EventPrime</PageTitle>
+
+@if (!AuthService.IsAuthenticated)
+{
+    <div class="admin-auth-checking">
+        <span>Redirecting…</span>
+    </div>
+}
+else
+{
+    <section class="admin-dashboard">
+
+        <!-- Header -->
+        <div class="admin-dash-header">
+            <div class="container">
+                <div class="admin-dash-top">
+                    <div>
+                        <div class="admin-dash-tag">Admin Panel</div>
+                        <h1 class="admin-dash-title">Dashboard</h1>
+                        <p class="admin-dash-subtitle">Welcome back! Manage your events, orders, and site content below.</p>
+                    </div>
+                    <button class="admin-logout-btn" @onclick="Logout">Sign Out</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="container admin-stats-row">
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">🎟️</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value">0</span>
+                    <span class="admin-stat-label">Total Orders</span>
+                </div>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">📅</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value">0</span>
+                    <span class="admin-stat-label">Active Events</span>
+                </div>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">👥</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value">0</span>
+                    <span class="admin-stat-label">Attendees</span>
+                </div>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">📋</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value">0</span>
+                    <span class="admin-stat-label">Event Requests</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content panels -->
+        <div class="container admin-panels">
+
+            <!-- Orders panel -->
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2 class="admin-panel-title">🎟️ Recent Orders</h2>
+                </div>
+                <div class="admin-panel-body">
+                    <div class="admin-empty-state">
+                        <span class="admin-empty-icon">📭</span>
+                        <p class="admin-empty-text">No orders yet</p>
+                        <span class="admin-empty-sub">Orders will appear here once customers start purchasing tickets.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events panel -->
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2 class="admin-panel-title">📅 Manage Events</h2>
+                    <button class="admin-panel-action-btn" disabled>+ Add Event</button>
+                </div>
+                <div class="admin-panel-body">
+                    <div class="admin-empty-state">
+                        <span class="admin-empty-icon">🗓️</span>
+                        <p class="admin-empty-text">No events listed</p>
+                        <span class="admin-empty-sub">Add your first event to get started.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Requests panel -->
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2 class="admin-panel-title">📋 Event Planning Requests</h2>
+                </div>
+                <div class="admin-panel-body">
+                    <div class="admin-empty-state">
+                        <span class="admin-empty-icon">📝</span>
+                        <p class="admin-empty-text">No requests received</p>
+                        <span class="admin-empty-sub">Planning requests submitted via the site will appear here.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick links panel -->
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2 class="admin-panel-title">⚡ Quick Links</h2>
+                </div>
+                <div class="admin-panel-body admin-quick-links">
+                    <a href="/" class="admin-quick-link">
+                        <span>🏠</span> View Site
+                    </a>
+                    <a href="/events" class="admin-quick-link">
+                        <span>📅</span> Events Page
+                    </a>
+                    <a href="/plan-event" class="admin-quick-link">
+                        <span>✨</span> Plan an Event
+                    </a>
+                    <a href="/contact" class="admin-quick-link">
+                        <span>📬</span> Contact Page
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Nav.NavigateTo("/admin/login");
+        }
+    }
+
+    private void Logout()
+    {
+        AuthService.Logout();
+        Nav.NavigateTo("/admin/login");
+    }
+}
