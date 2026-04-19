@@ -2,17 +2,18 @@
    Horizontal Navbar
    ============================== */
 .ep-navbar {
-    background: rgba(10, 8, 30, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
-    padding: 0.85rem 0;
+    background: rgba(10, 8, 30, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.18);
+    padding: 0.9rem 0;
     transition: background 0.3s ease;
     z-index: 1030;
 }
 
+/* Brand */
 .ep-navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     font-weight: 800;
     text-decoration: none;
     background: linear-gradient(90deg, #a855f7, #6366f1);
@@ -27,96 +28,152 @@
 
 .brand-icon {
     -webkit-text-fill-color: #a855f7;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
 }
 
+/* Nav links — underline-accent style */
 .ep-nav-link {
-    color: #d1d5db !important;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 0.5rem 0.9rem !important;
-    border-radius: 6px;
+    color: #b0b8d0 !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.45rem 0.25rem !important;
     text-decoration: none;
-    transition: color 0.2s, background 0.2s;
-    display: block;
+    display: inline-block;
+    position: relative;
+    transition: color 0.2s;
+}
+
+/* Animated gradient underline */
+.ep-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #a855f7, #6366f1);
+    border-radius: 2px;
+    transition: width 0.25s ease;
 }
 
 .ep-nav-link:hover {
     color: #ffffff !important;
-    background: rgba(168, 85, 247, 0.12);
+}
+
+.ep-nav-link:hover::after {
+    width: 100%;
 }
 
 .ep-nav-link.active {
-    color: #a855f7 !important;
-    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc !important;
 }
 
+.ep-nav-link.active::after {
+    width: 100%;
+}
+
+/* CTA button */
 .ep-cta-btn {
     background: linear-gradient(135deg, #a855f7, #6366f1);
     color: #ffffff !important;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.5rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    padding: 0.5rem 1.35rem;
     border-radius: 50px;
     border: none;
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+    box-shadow: 0 4px 18px rgba(168, 85, 247, 0.35);
+    white-space: nowrap;
 }
 
 .ep-cta-btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.55);
     color: #ffffff !important;
 }
 
-/* Custom hamburger toggler */
+/* ==============================
+   Hamburger toggler
+   ============================== */
 .ep-toggler {
-    border: none;
-    background: transparent;
-    padding: 0.4rem;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    background: rgba(168, 85, 247, 0.08);
+    border-radius: 8px;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    padding: 0;
 }
 
 .ep-toggler:focus {
-    outline: 2px solid rgba(168, 85, 247, 0.5);
-    outline-offset: 2px;
-    box-shadow: none;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.35);
 }
 
-.toggler-bar {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: #d1d5db;
-    border-radius: 2px;
-    transition: background 0.2s;
+.ep-toggler:hover {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.6);
 }
 
-.ep-toggler:hover .toggler-bar {
-    background: #a855f7;
+.toggler-svg {
+    width: 20px;
+    height: 20px;
+    color: #c084fc;
+    transition: color 0.2s;
 }
 
-/* Mobile dropdown styles */
+.ep-toggler:hover .toggler-svg {
+    color: #fff;
+}
+
+.toggler-line {
+    transition: opacity 0.2s;
+}
+
+/* Mobile dropdown */
 @media (max-width: 991.98px) {
     .ep-navbar .navbar-collapse {
-        background: rgba(10, 8, 30, 0.98);
-        margin-top: 0.75rem;
-        border-radius: 12px;
-        padding: 1rem;
+        background: rgba(12, 9, 35, 0.98);
+        margin-top: 0.85rem;
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
         border: 1px solid rgba(168, 85, 247, 0.2);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
 
     .ep-nav-link {
-        padding: 0.65rem 1rem !important;
+        padding: 0.7rem 0.5rem !important;
+        font-size: 0.95rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: block;
+        width: 100%;
+    }
+
+    .ep-nav-link::after {
+        display: none;
+    }
+
+    .ep-nav-link:hover,
+    .ep-nav-link.active {
+        background: rgba(168, 85, 247, 0.1);
+        border-radius: 8px;
+        padding-left: 0.85rem !important;
+    }
+
+    .navbar-nav .nav-item:last-child .ep-nav-link {
+        border-bottom: none;
     }
 
     .ep-cta-btn {
-        margin-top: 0.5rem;
+        margin-top: 0.85rem;
         text-align: center;
         display: block;
         width: 100%;

@@ -1,0 +1,282 @@
+﻿@page "/plan-event"
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Plan an Event – EventPrime</PageTitle>
+
+<!-- Page Banner -->
+<section class="page-banner">
+    <div class="banner-shapes">
+        <div class="banner-shape bs-1"></div>
+        <div class="banner-shape bs-2"></div>
+    </div>
+    <div class="container banner-body">
+        <div class="section-tag">Get Started</div>
+        <h1 class="banner-title">Plan Your Event</h1>
+        <p class="banner-subtitle">Tell us about your vision and we'll help bring it to life — from intimate gatherings to large-scale productions.</p>
+    </div>
+</section>
+
+<!-- Planning Form -->
+<section class="plan-section">
+    <div class="container">
+        <div class="plan-layout">
+
+            <!-- Sidebar Tips -->
+            <aside class="plan-sidebar">
+                <h3 class="sidebar-heading">Why EventPrime?</h3>
+                <ul class="sidebar-tips">
+                    <li class="tip-item">
+                        <span class="tip-icon">🎯</span>
+                        <div>
+                            <strong>Tailored Proposals</strong>
+                            <p>We match your requirements to the right venues and vendors.</p>
+                        </div>
+                    </li>
+                    <li class="tip-item">
+                        <span class="tip-icon">⚡</span>
+                        <div>
+                            <strong>Fast Response</strong>
+                            <p>Our team responds within 24 hours with a personalised plan.</p>
+                        </div>
+                    </li>
+                    <li class="tip-item">
+                        <span class="tip-icon">💰</span>
+                        <div>
+                            <strong>Budget Friendly</strong>
+                            <p>Options across every budget, with no hidden fees.</p>
+                        </div>
+                    </li>
+                    <li class="tip-item">
+                        <span class="tip-icon">🤝</span>
+                        <div>
+                            <strong>Dedicated Support</strong>
+                            <p>A personal event coordinator guides you from start to finish.</p>
+                        </div>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Form -->
+            <div class="plan-form-wrap">
+                @if (submitted)
+                {
+                    <div class="success-state">
+                        <div class="success-icon">🎉</div>
+                        <h2 class="success-title">Request Received!</h2>
+                        <p class="success-msg">Thanks, <strong>@model.FirstName</strong>! We've received your event request and will be in touch within 24 hours.</p>
+                        <button class="btn-plan-submit" @onclick="Reset">Submit Another Request</button>
+                    </div>
+                }
+                else
+                {
+                    <EditForm Model="model" OnValidSubmit="HandleSubmit">
+                        <DataAnnotationsValidator />
+
+                        <h2 class="form-heading">Event Details</h2>
+                        <p class="form-sub">Fill in the details below and we'll prepare a custom plan just for you.</p>
+
+                        <!-- Contact info row -->
+                        <div class="form-section-label">Your Information</div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">First Name <span class="required">*</span></label>
+                                <InputText class="field-input" @bind-Value="model.FirstName" placeholder="Jane" />
+                                <ValidationMessage For="@(() => model.FirstName)" class="field-error" />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Last Name <span class="required">*</span></label>
+                                <InputText class="field-input" @bind-Value="model.LastName" placeholder="Doe" />
+                                <ValidationMessage For="@(() => model.LastName)" class="field-error" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Email Address <span class="required">*</span></label>
+                                <InputText class="field-input" @bind-Value="model.Email" placeholder="jane@example.com" type="email" />
+                                <ValidationMessage For="@(() => model.Email)" class="field-error" />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Phone Number</label>
+                                <InputText class="field-input" @bind-Value="model.Phone" placeholder="+1 (555) 000-0000" />
+                            </div>
+                        </div>
+
+                        <!-- Event details -->
+                        <div class="form-section-label">Event Details</div>
+
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Event Type <span class="required">*</span></label>
+                                <InputSelect class="field-input" @bind-Value="model.EventType">
+                                    <option value="">Select a type…</option>
+                                    <option value="Corporate">🏢 Corporate / Business</option>
+                                    <option value="Conference">🎤 Conference / Summit</option>
+                                    <option value="Concert">🎵 Concert / Music</option>
+                                    <option value="Wedding">💍 Wedding / Celebration</option>
+                                    <option value="Birthday">🎂 Birthday / Private Party</option>
+                                    <option value="Festival">🎪 Festival / Outdoor</option>
+                                    <option value="Sports">🏆 Sports / Competition</option>
+                                    <option value="Charity">❤️ Charity / Fundraiser</option>
+                                    <option value="Workshop">📚 Workshop / Training</option>
+                                    <option value="Other">✨ Other</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => model.EventType)" class="field-error" />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Expected Attendees <span class="required">*</span></label>
+                                <InputSelect class="field-input" @bind-Value="model.AttendeeRange">
+                                    <option value="">Select a range…</option>
+                                    <option value="1-25">1 – 25 people</option>
+                                    <option value="26-50">26 – 50 people</option>
+                                    <option value="51-100">51 – 100 people</option>
+                                    <option value="101-250">101 – 250 people</option>
+                                    <option value="251-500">251 – 500 people</option>
+                                    <option value="501-1000">501 – 1,000 people</option>
+                                    <option value="1000+">1,000+ people</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => model.AttendeeRange)" class="field-error" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Preferred Date <span class="required">*</span></label>
+                                <InputDate class="field-input" @bind-Value="model.EventDate" />
+                                <ValidationMessage For="@(() => model.EventDate)" class="field-error" />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Duration</label>
+                                <InputSelect class="field-input" @bind-Value="model.Duration">
+                                    <option value="">Select duration…</option>
+                                    <option value="Half Day">Half Day (up to 4 hrs)</option>
+                                    <option value="Full Day">Full Day (4–8 hrs)</option>
+                                    <option value="Multi Day">Multi-Day (2+ days)</option>
+                                    <option value="Weekend">Full Weekend</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-label">Preferred Location / City</label>
+                            <InputText class="field-input" @bind-Value="model.Location" placeholder="e.g. New York, NY or Virtual" />
+                        </div>
+
+                        <!-- Budget & extras -->
+                        <div class="form-section-label">Budget &amp; Extras</div>
+
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label class="field-label">Estimated Budget</label>
+                                <InputSelect class="field-input" @bind-Value="model.Budget">
+                                    <option value="">Select a range…</option>
+                                    <option value="Under $1k">Under $1,000</option>
+                                    <option value="$1k-$5k">$1,000 – $5,000</option>
+                                    <option value="$5k-$15k">$5,000 – $15,000</option>
+                                    <option value="$15k-$50k">$15,000 – $50,000</option>
+                                    <option value="$50k+">$50,000+</option>
+                                    <option value="Flexible">Flexible / Open</option>
+                                </InputSelect>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">How did you hear about us?</label>
+                                <InputSelect class="field-input" @bind-Value="model.Source">
+                                    <option value="">Select…</option>
+                                    <option value="Search">Search Engine</option>
+                                    <option value="Social">Social Media</option>
+                                    <option value="Referral">Referral / Friend</option>
+                                    <option value="Ad">Advertisement</option>
+                                    <option value="Other">Other</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-label">Services Needed</label>
+                            <div class="checkbox-grid">
+                                @foreach (var svc in availableServices)
+                                {
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" class="checkbox-input"
+                                               checked="@model.Services.Contains(svc)"
+                                               @onchange="@(e => ToggleService(svc, (bool)(e.Value ?? false)))" />
+                                        <span class="checkbox-label">@svc</span>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="field-label">Additional Notes or Vision</label>
+                            <InputTextArea class="field-input field-textarea" @bind-Value="model.Notes" placeholder="Share any special requirements, themes, or ideas…" rows="5" />
+                        </div>
+
+                        <button type="submit" class="btn-plan-submit">Submit Event Request 🚀</button>
+                    </EditForm>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private PlanEventModel model = new();
+    private bool submitted = false;
+
+    private readonly string[] availableServices = new[]
+    {
+        "🏟️ Venue", "🎤 Audio / Visual", "🍽️ Catering", "📸 Photography",
+        "🎥 Videography", "🎶 Entertainment", "🌸 Decorations", "🚌 Transportation",
+        "🔒 Security", "📣 Marketing / Promotion"
+    };
+
+    private void ToggleService(string service, bool isChecked)
+    {
+        if (isChecked)
+            model.Services.Add(service);
+        else
+            model.Services.Remove(service);
+    }
+
+    private void HandleSubmit()
+    {
+        submitted = true;
+    }
+
+    private void Reset()
+    {
+        model = new();
+        submitted = false;
+    }
+
+    private class PlanEventModel
+    {
+        [Required(ErrorMessage = "First name is required.")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Last name is required.")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email address is required.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        public string Email { get; set; } = string.Empty;
+
+        public string Phone { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please select an event type.")]
+        public string EventType { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please select an attendee range.")]
+        public string AttendeeRange { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please choose a date.")]
+        public DateOnly EventDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+
+        public string Duration { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string Budget { get; set; } = string.Empty;
+        public string Source { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+        public HashSet<string> Services { get; set; } = new();
+    }
+}

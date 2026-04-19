@@ -5,13 +5,15 @@
         </a>
 
         <button class="navbar-toggler ep-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="toggler-bar"></span>
-            <span class="toggler-bar"></span>
-            <span class="toggler-bar"></span>
+            <svg class="toggler-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path class="toggler-line top-line" d="M4 6h16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+                <path class="toggler-line mid-line" d="M4 12h10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+                <path class="toggler-line bot-line" d="M4 18h16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
         </button>
 
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                 <li class="nav-item">
                     <NavLink class="ep-nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
                 </li>
@@ -24,8 +26,8 @@
                 <li class="nav-item">
                     <NavLink class="ep-nav-link" href="/contact">Contact</NavLink>
                 </li>
-                <li class="nav-item ms-lg-3">
-                    <a class="btn ep-cta-btn" href="/events">Browse Events</a>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn ep-cta-btn" href="/plan-event">Plan an Event</a>
                 </li>
             </ul>
         </div>
