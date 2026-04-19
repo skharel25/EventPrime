@@ -39,7 +39,7 @@
             </div>
         </div>
         <hr class="footer-divider" />
-        <p class="footer-copy">&copy; @DateTime.Now.Year EventPrime. All rights reserved.</p>
+        <p class="footer-copy">&copy; @currentYear EventPrime. All rights reserved.</p>
     </div>
 </footer>
 
@@ -48,3 +48,12 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private int currentYear;
+
+    protected override void OnInitialized()
+    {
+        currentYear = DateTime.Now.Year;
+    }
+}
