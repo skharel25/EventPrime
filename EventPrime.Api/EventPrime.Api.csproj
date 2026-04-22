@@ -8,6 +8,14 @@
     <RootNamespace>EventPrime.Api</RootNamespace>
     <!-- Required for the isolated worker model -->
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+    <!-- Reduce deployment package size.
+         TrimMode=partial trims only SDK assemblies; full link-mode trimming is
+         unsafe here because DataAnnotations.Validator and JsonSerializer use
+         reflection (see IL2026 build warnings). InvariantGlobalization removes
+         culture data that is not required by this API. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
