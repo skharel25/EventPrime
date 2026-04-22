@@ -25,6 +25,11 @@ public class AuthFunction
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+    // Computed once at class initialization so a lookup for a non-existent user still performs
+    // a full BCrypt verification, preventing timing-based user enumeration.
+    private static readonly string DummyPasswordHash =
+        BCrypt.Net.BCrypt.HashPassword("dummy_constant_value", workFactor: 11);
+
     public AuthFunction(ILogger<AuthFunction> logger, IUserStore userStore, IConfiguration configuration)
     {
         _logger = logger;
@@ -64,10 +69,9 @@ public class AuthFunction
 
         var user = await _userStore.GetByEmailAsync(body.Email);
 
-        // Use a constant-time comparison via BCrypt to avoid timing attacks.
-        // Verify against a dummy hash when the user is not found so response time is consistent.
-        const string DummyHash = "$2a$12$invalidsaltinvalidsaltinvalidsa.invalidsaltinvalidsaltinv";
-        var hashToVerify = user?.PasswordHash ?? DummyHash;
+        // DummyPasswordHash is used when the user does not exist so that BCrypt work is always
+        // performed, preventing timing-based user enumeration.
+        var hashToVerify = user?.PasswordHash ?? DummyPasswordHash;
         var passwordValid = BCrypt.Net.BCrypt.Verify(body.Password, hashToVerify);
 
         if (user is null || !passwordValid)

@@ -76,7 +76,7 @@ public class UserStore : IUserStore
             };
 
             await CreateAsync(admin);
-            _logger.LogInformation("Seeded initial admin user {Email}.", AdminEmail);
+            _logger.LogInformation("Seeded initial admin user.");
         }
         catch (Exception ex)
         {

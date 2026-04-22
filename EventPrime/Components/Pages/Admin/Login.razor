@@ -60,15 +60,21 @@
     {
         loginFailed = false;
         isSubmitting = true;
-        if (await AuthService.LoginAsync(model.Email, model.Password))
+        try
         {
-            Nav.NavigateTo("/admin");
+            if (await AuthService.LoginAsync(model.Email, model.Password))
+            {
+                Nav.NavigateTo("/admin");
+            }
+            else
+            {
+                loginFailed = true;
+            }
         }
-        else
+        finally
         {
-            loginFailed = true;
+            isSubmitting = false;
         }
-        isSubmitting = false;
     }
 
     private class LoginModel
