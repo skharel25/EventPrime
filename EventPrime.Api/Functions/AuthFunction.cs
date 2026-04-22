@@ -1,15 +1,23 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using EventPrime.Api.Models;
+using EventPrime.Api.Services;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EventPrime.Api.Functions;
 
 public class AuthFunction
 {
     private readonly ILogger<AuthFunction> _logger;
+    private readonly IUserStore _userStore;
+    private readonly IConfiguration _configuration;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -17,16 +25,16 @@ public class AuthFunction
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
-    public AuthFunction(ILogger<AuthFunction> logger)
+    public AuthFunction(ILogger<AuthFunction> logger, IUserStore userStore, IConfiguration configuration)
     {
         _logger = logger;
+        _userStore = userStore;
+        _configuration = configuration;
     }
 
     /// <summary>
     /// POST /api/auth/login
-    /// Validates admin credentials and returns a token placeholder.
-    /// TODO: Replace mock credentials with a real identity provider (e.g. Azure AD B2C, ASP.NET Identity).
-    /// TODO: Issue a real JWT instead of the placeholder token.
+    /// Validates credentials against the Azure Table Storage users table and returns a signed JWT.
     /// </summary>
     [Function("Login")]
     public async Task<HttpResponseData> Login(
@@ -54,11 +62,15 @@ public class AuthFunction
             return badRequest;
         }
 
-        // TODO: Replace with real credential validation (hashed passwords, identity provider, etc.)
-        const string MockEmail = "admin@eventprime.com";
-        const string MockPassword = "admin123";
+        var user = await _userStore.GetByEmailAsync(body.Email);
 
-        if (!body.Email.Equals(MockEmail, StringComparison.OrdinalIgnoreCase) || body.Password != MockPassword)
+        // Use a constant-time comparison via BCrypt to avoid timing attacks.
+        // Verify against a dummy hash when the user is not found so response time is consistent.
+        const string DummyHash = "$2a$12$invalidsaltinvalidsaltinvalidsa.invalidsaltinvalidsaltinv";
+        var hashToVerify = user?.PasswordHash ?? DummyHash;
+        var passwordValid = BCrypt.Net.BCrypt.Verify(body.Password, hashToVerify);
+
+        if (user is null || !passwordValid)
         {
             _logger.LogWarning("Failed login attempt for {Email}.", body.Email);
             var unauthorized = req.CreateResponse(HttpStatusCode.Unauthorized);
@@ -66,17 +78,46 @@ public class AuthFunction
             return unauthorized;
         }
 
-        // TODO: Generate a proper JWT signed with a secret key stored in Azure Key Vault / App Settings
+        var token = GenerateJwt(user);
+
         var loginResponse = new LoginResponse
         {
             Success = true,
-            Token = $"placeholder-token-{Guid.NewGuid()}",
+            Token = token,
             Message = "Login successful.",
         };
 
-        _logger.LogInformation("Admin login successful for {Email}.", body.Email);
+        _logger.LogInformation("Login successful for {Email}.", user.Email);
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(ApiResponse<LoginResponse>.Ok(loginResponse, "Login successful."));
         return response;
+    }
+
+    private string GenerateJwt(UserEntity user)
+    {
+        var secret = _configuration["JwtSecret"]
+            ?? throw new InvalidOperationException("JwtSecret is not configured.");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
+            new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: "EventPrime.Api",
+            audience: "EventPrime",
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(8),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
