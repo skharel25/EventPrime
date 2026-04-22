@@ -1,31 +1,79 @@
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace EventPrime.Services;
 
 /// <summary>
-/// Temporary mock authentication service for admin access.
-/// Replace with a proper API-backed implementation once the login endpoint is available.
+/// Authenticates admin users by calling the EventPrime API login endpoint.
+/// The received JWT is stored in memory for the lifetime of the Blazor circuit.
 /// </summary>
 public class AdminAuthService
 {
-    // TODO: Replace with API-backed authentication when the login endpoint is ready.
-    // Use .NET user-secrets or environment variables for credentials in the interim.
-    private const string MockEmail = "admin@eventprime.com";
-    private const string MockPassword = "admin123";
+    private readonly IHttpClientFactory _httpClientFactory;
+    private string? _token;
+    private DateTimeOffset _tokenExpiry;
 
-    public bool IsAuthenticated { get; private set; }
-
-    public bool Login(string email, string password)
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        if (string.Equals(email, MockEmail, StringComparison.OrdinalIgnoreCase)
-            && password == MockPassword)
+        PropertyNameCaseInsensitive = true,
+    };
+
+    public AdminAuthService(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
+
+    public bool IsAuthenticated =>
+        !string.IsNullOrEmpty(_token) && DateTimeOffset.UtcNow < _tokenExpiry;
+
+    public string? Token => _token;
+
+    /// <summary>
+    /// Calls POST /api/auth/login and stores the returned JWT on success.
+    /// Returns true on success, false on invalid credentials or network errors.
+    /// </summary>
+    public async Task<bool> LoginAsync(string email, string password)
+    {
+        try
         {
-            IsAuthenticated = true;
+            var client = _httpClientFactory.CreateClient("EventPrimeApi");
+            var response = await client.PostAsJsonAsync("/api/auth/login", new { email, password });
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var json = await response.Content.ReadFromJsonAsync<ApiLoginResponse>(JsonOptions);
+            if (json?.Data?.Token is null)
+                return false;
+
+            _token = json.Data.Token;
+            // JWT tokens issued by the API expire in 8 hours; expire locally slightly earlier to be safe.
+            _tokenExpiry = DateTimeOffset.UtcNow.AddHours(7).AddMinutes(55);
             return true;
         }
-        return false;
+        catch
+        {
+            return false;
+        }
     }
 
     public void Logout()
     {
-        IsAuthenticated = false;
+        _token = null;
+        _tokenExpiry = DateTimeOffset.MinValue;
+    }
+
+    // Minimal DTOs for deserialising the API response.
+    private sealed class ApiLoginResponse
+    {
+        [JsonPropertyName("data")]
+        public LoginData? Data { get; set; }
+    }
+
+    private sealed class LoginData
+    {
+        [JsonPropertyName("token")]
+        public string? Token { get; set; }
     }
 }

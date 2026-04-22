@@ -36,7 +36,9 @@
                 <ValidationMessage For="@(() => model.Password)" class="admin-field-error" />
             </div>
 
-            <button type="submit" class="admin-login-btn">Sign In</button>
+            <button type="submit" class="admin-login-btn" disabled="@isSubmitting">
+                @(isSubmitting ? "Signing in…" : "Sign In")
+            </button>
         </EditForm>
     </div>
 </section>
@@ -44,6 +46,7 @@
 @code {
     private LoginModel model = new();
     private bool loginFailed = false;
+    private bool isSubmitting = false;
 
     protected override void OnInitialized()
     {
@@ -53,16 +56,24 @@
         }
     }
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
         loginFailed = false;
-        if (AuthService.Login(model.Email, model.Password))
+        isSubmitting = true;
+        try
         {
-            Nav.NavigateTo("/admin");
+            if (await AuthService.LoginAsync(model.Email, model.Password))
+            {
+                Nav.NavigateTo("/admin");
+            }
+            else
+            {
+                loginFailed = true;
+            }
         }
-        else
+        finally
         {
-            loginFailed = true;
+            isSubmitting = false;
         }
     }
 
